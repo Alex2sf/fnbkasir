@@ -8,6 +8,7 @@ use App\Models\OrderItem;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class DashboardStats extends Component
 {
@@ -27,9 +28,9 @@ class DashboardStats extends Component
 
     public function render()
     {
-        $today = Carbon::today();
-        $thisMonth = Carbon::now()->startOfMonth();
-        $user = auth()->user();
+        $today      = Carbon::today();
+        $thisMonth  = Carbon::now()->startOfMonth();
+        $user       = auth()->user();
 
         $query = Order::query()->where('status', 'completed');
         
@@ -39,19 +40,23 @@ class DashboardStats extends Component
         }
 
         // 1. Basic Stats
-        $todayRevenue = (clone $query)->whereDate('created_at', $today)->sum('total_amount');
-        $monthRevenue = (clone $query)->where('created_at', '>=', $thisMonth)->sum('total_amount');
-        $todayOrdersCount = (clone $query)->whereDate('created_at', $today)->count();
+        $todayRevenue      = (clone $query)->whereDate('created_at', $today)->sum('total_amount');
+        $monthRevenue      = (clone $query)->where('created_at', '>=', $thisMonth)->sum('total_amount');
+        $todayOrdersCount  = (clone $query)->whereDate('created_at', $today)->count();
+        $yesterdayRevenue  = (clone $query)->whereDate('created_at', Carbon::yesterday())->sum('total_amount');
+        $revenueChange     = $yesterdayRevenue > 0
+            ? (($todayRevenue - $yesterdayRevenue) / $yesterdayRevenue) * 100
+            : null;
 
         // 2. Chart Data (Last 7 Days Revenue)
         $chartLabels = [];
-        $chartData = [];
+        $chartData   = [];
 
         for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::today()->subDays($i);
-            $chartLabels[] = $date->format('d M');
-            $revenue = (clone $query)->whereDate('created_at', $date)->sum('total_amount');
-            $chartData[] = $revenue;
+            $date           = Carbon::today()->subDays($i);
+            $chartLabels[]  = $date->format('d M');
+            $revenue        = (clone $query)->whereDate('created_at', $date)->sum('total_amount');
+            $chartData[]    = $revenue;
         }
 
         // 3. Top Selling Products
@@ -69,9 +74,9 @@ class DashboardStats extends Component
             ->get();
 
         // 4. Performance per Cashier (Only for Admin)
-        $cashierStats = [];
+        $cashierStats   = [];
         $pieChartLabels = [];
-        $pieChartData = [];
+        $pieChartData   = [];
 
         if ($user->is_admin) {
             $cashiers = User::where('is_admin', false)
@@ -91,21 +96,22 @@ class DashboardStats extends Component
             foreach($cashiers as $c) {
                 if($c->month_revenue > 0) {
                     $pieChartLabels[] = $c->name;
-                    $pieChartData[] = (float) $c->month_revenue;
+                    $pieChartData[]   = (float) $c->month_revenue;
                 }
             }
         }
 
         return view('livewire.dashboard-stats', [
-            'todayRevenue' => $todayRevenue,
-            'monthRevenue' => $monthRevenue,
-            'todayOrdersCount' => $todayOrdersCount,
-            'chartLabels' => json_encode($chartLabels),
-            'chartData' => json_encode($chartData),
-            'topProducts' => $topProducts,
-            'cashierStats' => $cashierStats,
-            'pieChartLabels' => json_encode($pieChartLabels),
-            'pieChartData' => json_encode($pieChartData),
+            'todayRevenue'      => $todayRevenue,
+            'monthRevenue'      => $monthRevenue,
+            'todayOrdersCount'  => $todayOrdersCount,
+            'revenueChange'     => $revenueChange,
+            'chartLabels'       => json_encode($chartLabels),
+            'chartData'         => json_encode($chartData),
+            'topProducts'       => $topProducts,
+            'cashierStats'      => $cashierStats,
+            'pieChartLabels'    => json_encode($pieChartLabels),
+            'pieChartData'      => json_encode($pieChartData),
         ]);
     }
 }
