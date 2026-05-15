@@ -18,9 +18,17 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
+            'name' => 'Administrator',
+            'email' => 'admin@warunggalih.test',
+            'password' => bcrypt('password'),
+            'is_admin' => true,
+        ]);
+
+        User::factory()->create([
             'name' => 'Kasir Utama',
             'email' => 'kasir@warunggalih.test',
             'password' => bcrypt('password'),
+            'is_admin' => false,
         ]);
 
         $makanan = \App\Models\Category::create(['name' => 'Makanan', 'slug' => 'makanan']);

@@ -36,4 +36,8 @@ Route::view('settings', 'settings')
     ->middleware(['auth'])
     ->name('settings');
 
+Route::view('users', 'users')
+    ->middleware(['auth'])
+    ->name('users');
+
 require __DIR__.'/auth.php';
