@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Warunggalih POS</title>
+    <link rel="icon" href="{{ asset('logo.png') }}" type="image/png">
 
     {{-- Tailwind CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>
@@ -43,11 +44,7 @@
         <div class="hidden lg:flex lg:w-1/2 auth-bg flex-col justify-between p-14 relative overflow-hidden">
             {{-- Logo --}}
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/30">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                    </svg>
-                </div>
+                <img src="{{ asset('logo.png') }}" alt="Logo" class="w-10 h-10 object-contain">
                 <span class="text-white font-bold text-xl">Warunggalih POS</span>
             </div>
 
@@ -97,11 +94,7 @@
         <div class="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-14 lg:px-20 py-12 bg-white">
             {{-- Mobile logo --}}
             <div class="flex lg:hidden items-center gap-2.5 mb-10">
-                <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                    </svg>
-                </div>
+                <img src="{{ asset('logo.png') }}" alt="Logo" class="w-8 h-8 object-contain">
                 <span class="font-bold text-gray-900">Warunggalih POS</span>
             </div>
 
