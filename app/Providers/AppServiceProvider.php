@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if (request()->headers->has('Host')) {
+            \Illuminate\Support\Facades\URL::forceRootUrl(request()->getSchemeAndHttpHost());
+            config(['app.url' => request()->getSchemeAndHttpHost()]);
+        }
     }
 }
