@@ -70,15 +70,30 @@ class DashboardStats extends Component
 
         // 4. Performance per Cashier (Only for Admin)
         $cashierStats = [];
+        $pieChartLabels = [];
+        $pieChartData = [];
+
         if ($user->is_admin) {
-            $cashierStats = User::where('is_admin', false)
+            $cashiers = User::where('is_admin', false)
                 ->withCount(['orders' => function($q) use ($today) {
                     $q->whereDate('created_at', $today)->where('status', 'completed');
                 }])
                 ->withSum(['orders as today_revenue' => function($q) use ($today) {
                     $q->whereDate('created_at', $today)->where('status', 'completed');
                 }], 'total_amount')
+                ->withSum(['orders as month_revenue' => function($q) use ($thisMonth) {
+                    $q->where('created_at', '>=', $thisMonth)->where('status', 'completed');
+                }], 'total_amount')
                 ->get();
+
+            $cashierStats = $cashiers;
+
+            foreach($cashiers as $c) {
+                if($c->month_revenue > 0) {
+                    $pieChartLabels[] = $c->name;
+                    $pieChartData[] = (float) $c->month_revenue;
+                }
+            }
         }
 
         return view('livewire.dashboard-stats', [
@@ -89,6 +104,8 @@ class DashboardStats extends Component
             'chartData' => json_encode($chartData),
             'topProducts' => $topProducts,
             'cashierStats' => $cashierStats,
+            'pieChartLabels' => json_encode($pieChartLabels),
+            'pieChartData' => json_encode($pieChartData),
         ]);
     }
 }

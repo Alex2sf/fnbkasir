@@ -101,43 +101,53 @@
     </div>
 
     @if(auth()->user()->is_admin)
-    {{-- Laporan Per Kasir --}}
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mt-4">
-        <h3 class="text-base font-bold text-gray-900 mb-4">👥 Pantauan Kinerja Kasir Hari Ini</h3>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-50 border-b border-gray-100 text-sm font-semibold text-gray-700">
-                        <th class="py-3 px-4">Nama Kasir / Usaha</th>
-                        <th class="py-3 px-4 text-center">Transaksi Hari Ini</th>
-                        <th class="py-3 px-4 text-right">Omzet Hari Ini</th>
-                        <th class="py-3 px-4 text-center">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse($cashierStats as $cashier)
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="py-3 px-4 font-medium text-gray-900">{{ $cashier->name }}</td>
-                        <td class="py-3 px-4 text-center font-bold text-blue-600">{{ $cashier->orders_count }} Order</td>
-                        <td class="py-3 px-4 text-right font-black text-green-600">Rp {{ number_format($cashier->today_revenue ?? 0, 0, ',', '.') }}</td>
-                        <td class="py-3 px-4 text-center">
-                            <button 
-                                wire:click="deleteUser({{ $cashier->id }})"
-                                wire:confirm="Yakin ingin menghapus usaha/kasir ini?\n\nPERHATIAN: Semua data transaksi (orders & items) yang pernah dibuat oleh {{ $cashier->name }} akan TERHAPUS PERMANEN!"
-                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-xs font-bold transition"
-                            >
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                Hapus
-                            </button>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="4" class="text-center py-6 text-gray-400 text-sm">Belum ada kasir yang ditambahkan.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+        {{-- Laporan Per Kasir --}}
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <h3 class="text-base font-bold text-gray-900 mb-4">👥 Pantauan Kinerja Kasir Hari Ini</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-100 text-sm font-semibold text-gray-700">
+                            <th class="py-3 px-4">Nama Kasir / Usaha</th>
+                            <th class="py-3 px-4 text-center">Transaksi Hari Ini</th>
+                            <th class="py-3 px-4 text-right">Omzet Hari Ini</th>
+                            <th class="py-3 px-4 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @forelse($cashierStats as $cashier)
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="py-3 px-4 font-medium text-gray-900">{{ $cashier->name }}</td>
+                            <td class="py-3 px-4 text-center font-bold text-blue-600">{{ $cashier->orders_count }} Order</td>
+                            <td class="py-3 px-4 text-right font-black text-green-600">Rp {{ number_format($cashier->today_revenue ?? 0, 0, ',', '.') }}</td>
+                            <td class="py-3 px-4 text-center">
+                                <button 
+                                    wire:click="deleteUser({{ $cashier->id }})"
+                                    wire:confirm="Yakin ingin menghapus usaha/kasir ini?\n\nPERHATIAN: Semua data transaksi (orders & items) yang pernah dibuat oleh {{ $cashier->name }} akan TERHAPUS PERMANEN!"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-xs font-bold transition"
+                                >
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    Hapus
+                                </button>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" class="text-center py-6 text-gray-400 text-sm">Belum ada kasir yang ditambahkan.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {{-- Pie Chart Perbandingan Omzet --}}
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col">
+            <h3 class="text-base font-bold text-gray-900 mb-4">🍩 Porsi Omzet (Bulan Ini)</h3>
+            <div class="relative flex-1 w-full min-h-[250px] flex items-center justify-center">
+                <canvas id="cashierPieChart"></canvas>
+            </div>
         </div>
     </div>
     @endif
@@ -216,6 +226,59 @@
                     }
                 }
             });
+
+            // Init Pie Chart (Admin Only)
+            const pieCanvas = document.getElementById('cashierPieChart');
+            if (pieCanvas) {
+                const pieCtx = pieCanvas.getContext('2d');
+                if (window.myPieChart) { window.myPieChart.destroy(); }
+                
+                const pieLabels = @json(isset($pieChartLabels) ? json_decode($pieChartLabels) : []);
+                const pieData = @json(isset($pieChartData) ? json_decode($pieChartData) : []);
+
+                window.myPieChart = new Chart(pieCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: pieLabels,
+                        datasets: [{
+                            data: pieData,
+                            backgroundColor: [
+                                '#f97316', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6'
+                            ],
+                            borderWidth: 0,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 20,
+                                    font: { size: 11, family: "'Inter', sans-serif" },
+                                    color: '#6b7280'
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: '#1f2937',
+                                titleColor: '#9ca3af',
+                                bodyColor: '#f9fafb',
+                                padding: 10,
+                                cornerRadius: 10,
+                                callbacks: {
+                                    label: function(context) {
+                                        return ' Rp ' + new Intl.NumberFormat('id-ID').format(context.parsed);
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '70%'
+                    }
+                });
+            }
         }
     </script>
 </div>
