@@ -6,10 +6,26 @@ use Livewire\Component;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Carbon\Carbon;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class DashboardStats extends Component
 {
+    public function deleteUser($id)
+    {
+        if(auth()->id() == $id) {
+            $this->js("alert('Tidak bisa menghapus akun sendiri!')");
+            return;
+        }
+        
+        $user = User::find($id);
+        if($user) {
+            $user->delete();
+            $this->js("alert('Usaha/Kasir berhasil dihapus! Semua transaksinya juga sudah terhapus permanen.')");
+        }
+    }
+
     public function render()
     {
         $today = Carbon::today();

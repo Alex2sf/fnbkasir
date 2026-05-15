@@ -5,11 +5,13 @@
             <h1 class="text-2xl font-black text-gray-900">Dashboard</h1>
             <p class="text-sm text-gray-500 mt-0.5">{{ now()->format('l, d F Y') }}</p>
         </div>
+        @if(!auth()->user()->is_admin)
         <a href="{{ route('pos') }}" wire:navigate
             class="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2.5 rounded-xl transition-all duration-200 active:scale-95 shadow-md shadow-orange-200 text-sm">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M12 7h.01M15 7h.01M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2h-4M9 21v-4a2 2 0 012-2h2a2 2 0 012 2v4"></path></svg>
             Buka Kasir
         </a>
+        @endif
     </div>
 
     {{-- Stat Cards --}}
@@ -106,9 +108,10 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-gray-50 border-b border-gray-100 text-sm font-semibold text-gray-700">
-                        <th class="py-3 px-4">Nama Kasir</th>
+                        <th class="py-3 px-4">Nama Kasir / Usaha</th>
                         <th class="py-3 px-4 text-center">Transaksi Hari Ini</th>
                         <th class="py-3 px-4 text-right">Omzet Hari Ini</th>
+                        <th class="py-3 px-4 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -117,10 +120,20 @@
                         <td class="py-3 px-4 font-medium text-gray-900">{{ $cashier->name }}</td>
                         <td class="py-3 px-4 text-center font-bold text-blue-600">{{ $cashier->orders_count }} Order</td>
                         <td class="py-3 px-4 text-right font-black text-green-600">Rp {{ number_format($cashier->today_revenue ?? 0, 0, ',', '.') }}</td>
+                        <td class="py-3 px-4 text-center">
+                            <button 
+                                wire:click="deleteUser({{ $cashier->id }})"
+                                wire:confirm="Yakin ingin menghapus usaha/kasir ini?\n\nPERHATIAN: Semua data transaksi (orders & items) yang pernah dibuat oleh {{ $cashier->name }} akan TERHAPUS PERMANEN!"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-xs font-bold transition"
+                            >
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                Hapus
+                            </button>
+                        </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="3" class="text-center py-6 text-gray-400 text-sm">Belum ada kasir yang ditambahkan.</td>
+                        <td colspan="4" class="text-center py-6 text-gray-400 text-sm">Belum ada kasir yang ditambahkan.</td>
                     </tr>
                     @endforelse
                 </tbody>
