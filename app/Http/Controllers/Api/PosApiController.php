@@ -10,8 +10,27 @@ use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItem;
 
+use App\Models\Setting;
+
 class PosApiController extends Controller
 {
+    public function getSettings()
+    {
+        $settings = Setting::all()->pluck('value', 'key');
+        
+        // Add full URL for logo
+        if(isset($settings['store_logo']) && $settings['store_logo']) {
+            $settings['store_logo_url'] = asset('storage/' . $settings['store_logo']);
+        } else {
+            $settings['store_logo_url'] = asset('logo.png');
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $settings
+        ]);
+    }
+
     public function getCategories()
     {
         $categories = Category::all();
