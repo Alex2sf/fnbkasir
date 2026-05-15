@@ -98,6 +98,37 @@
         </div>
     </div>
 
+    @if(auth()->user()->is_admin)
+    {{-- Laporan Per Kasir --}}
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mt-4">
+        <h3 class="text-base font-bold text-gray-900 mb-4">👥 Pantauan Kinerja Kasir Hari Ini</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-100 text-sm font-semibold text-gray-700">
+                        <th class="py-3 px-4">Nama Kasir</th>
+                        <th class="py-3 px-4 text-center">Transaksi Hari Ini</th>
+                        <th class="py-3 px-4 text-right">Omzet Hari Ini</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @forelse($cashierStats as $cashier)
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="py-3 px-4 font-medium text-gray-900">{{ $cashier->name }}</td>
+                        <td class="py-3 px-4 text-center font-bold text-blue-600">{{ $cashier->orders_count }} Order</td>
+                        <td class="py-3 px-4 text-right font-black text-green-600">Rp {{ number_format($cashier->today_revenue ?? 0, 0, ',', '.') }}</td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="3" class="text-center py-6 text-gray-400 text-sm">Belum ada kasir yang ditambahkan.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @endif
+
     {{-- Chart Script --}}
     <script>
         document.addEventListener('livewire:navigated', () => { initChart(); });
