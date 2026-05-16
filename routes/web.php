@@ -27,3 +27,19 @@ Route::view('settings', 'settings')->middleware(['auth'])->name('settings');
 Route::view('users', 'users')->middleware(['auth', \App\Http\Middleware\IsAdmin::class])->name('users');
 
 require __DIR__.'/auth.php';
+
+// Route bantuan untuk memperbaiki error 403 logo di cPanel (Broken Symlink)
+Route::get('/fix-storage', function () {
+    $publicStorage = public_path('storage');
+    
+    // Hapus symlink lama jika ada dan broken (biasanya karena path dari Windows terbawa ke Linux cPanel)
+    if (file_exists($publicStorage) || is_link($publicStorage)) {
+        // Di Windows is_link bisa false untuk symlink, tapi hapus saja
+        @unlink($publicStorage);
+    }
+    
+    // Buat symlink baru yang sesuai dengan path cPanel Linux
+    \Illuminate\Support\Facades\Artisan::call('storage:link');
+    
+    return 'Storage link berhasil diperbaiki! Silakan cek web Anda lagi.';
+});
