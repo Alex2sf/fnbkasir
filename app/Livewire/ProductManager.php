@@ -74,7 +74,11 @@ class ProductManager extends Component
         $imagePath = $this->image;
 
         if ($this->newImage) {
-            $imagePath = $this->newImage->store('products', 'public');
+            // Format penamaan file gambar produk: nama-produk_1234567890.jpg
+            $extension = $this->newImage->getClientOriginalExtension();
+            $filename = \Illuminate\Support\Str::slug($this->name) . '_' . time() . '.' . $extension;
+            $imagePath = $this->newImage->storeAs('products', $filename, 'public');
+            
             // Jika update dan ada gambar lama, bisa dihapus di sini
             if ($this->product_id && $this->image) {
                 Storage::disk('public')->delete($this->image);

@@ -42,7 +42,12 @@ class StoreSettings extends Component
             if ($this->existing_logo) {
                 Storage::disk('public')->delete($this->existing_logo);
             }
-            $path = $this->logo->store('settings', 'public');
+            
+            // Format penamaan file logo baru: logo_toko_1234567890.jpg
+            $extension = $this->logo->getClientOriginalExtension();
+            $filename = 'logo_toko_' . time() . '.' . $extension;
+            $path = $this->logo->storeAs('settings', $filename, 'public');
+            
             Setting::set('store_logo', $path);
             $this->existing_logo = $path;
             $this->logo = null;
